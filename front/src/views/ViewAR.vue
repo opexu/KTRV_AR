@@ -1,64 +1,74 @@
 <template>
-    <div class="container" ref="canvas_parent">
+    <div id="container-parent">
+        <div id="container" ref="canvas_parent">
+        </div>
+        <button class="absolute -translate-x-1/2 translate-y-1/2 left-1/2 top-1/2 rounded-md bg-green-600 py-2 px-3 text-[0.8125rem] font-semibold leading-5 text-white hover:bg-indigo-500"
+            v-on:click="startAR"
+            v-if="hideButton"
+            >START AR</button>
     </div>
 </template>
 
+<style scoped>
+    #container-parent{
+        width: auto;
+        height: auto;
+    }
+
+    #container{
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+        overflow: hidden;
+    }
+</style>
+
 <script>
-    import * as THREE from 'three';
-    import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls.js';
-    
+    //import * as THREE from 'three';
+    import 'mind-ar/dist/mindar-image-three.prod.js';
+    //import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls.js';
+    //import { ARButton } from 'three/addons/webxr/ARButton.js';
+    //import { ARButton } from '@/scripts/ARButton_MT.js';
+    import targetImage from "@/assets/targets.mind";
+
     export default {
         data: function() {
             return {
-                speed: 0.01
+                speed: 0.01,
+                hideButton: true
             }
         },
-        created: function() {
-            console.log("On Created");
-
-            this.scene = new THREE.Scene();
-            this.camera = new THREE.PerspectiveCamera( 75,  window.innerWidth / window.innerHeight, 0.1, 1000 );
-            this.renderer = new THREE.WebGLRenderer({ antialias: true });
-            const geometry = new THREE.BoxGeometry(1, 1, 1);
-            const material = new THREE.MeshBasicMaterial({
-                side: THREE.FrontSide,
-                color: new THREE.Color( 1.0, 0.0, 0.0),
-                wireframe: false
-            });
-            this.cube = new THREE.Mesh(geometry, material);
-            const axes = new THREE.AxesHelper(5);
-
-            this.scene.add( this.camera );
-            this.scene.add( this.cube );
-            this.scene.add( axes );
-            this.renderer.setSize( window.innerWidth, window.innerHeight );
-            this.camera.position.x = 5;
-            this.camera.position.z = 5;
-            this.camera.lookAt( 0, 0, 0 );
-            this.scene.background = new THREE.Color( 'hsl(0, 100%, 100%)' );
-        },  
         mounted(){
             console.log("On Mount");
-            this.$refs.canvas_parent.appendChild( this.renderer.domElement );
-            requestAnimationFrame( this.animate )
+
+            const THREE = MINDAR.IMAGE.THREE;
+
+            this.mindarThree = new MINDAR.IMAGE.MindARThree({
+                container: this.$refs.canvas_parent,
+                imageTargetSrc: targetImage
+            });
+            
+            const anchor = this.mindarThree.addAnchor(0);
+            const geometry = new THREE.PlaneGeometry( 1, 0.55 );
+            const material = new THREE.MeshBasicMaterial( { color: 0x00ffff, transparent: true, opacity: 0.5 } );
+            const plane = new THREE.Mesh( geometry, material );
+            
+            anchor.group.add( plane );
         },
         methods: {
-            animate(){
-                requestAnimationFrame( this.animate )
-                this.renderer.render( this.scene, this.camera )
-                this.cube.rotation.y += this.speed
-                //this.controls.update()
-            }
+            async startAR(){
+                console.log("startAR clicked");
+                
+                await this.mindarThree.start();
+
+                this.hideButton = false;
+
+                const { renderer, scene, camera } = this.mindarThree;
+
+                renderer.setAnimationLoop(() => {
+                    renderer.render( scene, camera );
+                });
+            },
         },
-        computed: {
-            rotate() {
-                if (this.speed === '') {
-                    return 0
-                } else {
-                    return this.speed
-                }
-            }
-            
-        }
     }
 </script>
