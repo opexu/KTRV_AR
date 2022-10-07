@@ -7,7 +7,8 @@ import * as Path from 'path';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-        rootPath: Path.join(__dirname, '..', '..', 'front', 'dist'),
+        //rootPath: Path.join(__dirname, '..', '..', 'front', 'dist'),
+        rootPath: Path.join(__dirname, '..', '..', 'vanilla'),
     })
   ],
   controllers: [AppController],

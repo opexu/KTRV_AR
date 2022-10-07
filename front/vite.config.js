@@ -16,5 +16,5 @@ export default defineConfig({
             '@': fileURLToPath(new URL('./src', import.meta.url))
         }
     },
-    assetsInclude: ['**/*.mind']
+    assetsInclude: ['**/*.mind', '**/*.fset', '**/*.fset3', '**/*.iset', '**/*.dat', '**/*.hiro']
 })

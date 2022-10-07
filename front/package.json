@@ -8,6 +8,10 @@
     "mt": "npm run build && npm run start:dev --prefix ./../back"
   },
   "dependencies": {
+    "@ar-js-org/ar.js": "^3.4.0",
+    "@webarkit/ar-nft": "^0.14.1",
+    "@webarkit/arnft-threejs": "^0.4.6",
+    "@webarkit/jsartoolkit-nft": "^1.1.4",
     "mind-ar": "^1.1.5",
     "three": "^0.145.0",
     "vue": "^3.2.38",

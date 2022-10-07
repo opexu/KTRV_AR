@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>ARToolkitNFT_ES6 multi marker example</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.5, maximum-scale=1">
+  <link rel="stylesheet" href="css/nft-style.css">
+</head>
+<body>
+    <div id="app">
+        <video
+            loop
+            autoplay
+            muted
+            playsinline
+            id="video">
+        </video>
+        <canvas id="canvas"></canvas>
+    </div>
+
+<script src="./scripts/three.min.js"></script>
+<script src="./scripts/ARToolkitNFT.js"></script>
+<script src="./scripts/index.js"></script>
+<script src="./scripts/threejs_multi_worker_ES6.js"></script>
+
+<script type="module">
+
+  var markerUrls = [ "../DataNFT/pinball", "../DataNFT/chalk_multi", "../DataNFT/kuva" ]
+
+  window.addEventListener('load', () => {
+    console.log('init ARToolkitNFT...');
+    initCamera()
+    .then(video => {
+
+    // start camera playback
+    sourceVideo = video;
+    sourceVideo.width = 640;
+    sourceVideo.height = 480;
+    sourceVideo.play();
+
+    // init target canvas
+    initTargetCanvas();
+
+    return new Promise(resolve => {
+      sourceVideo.addEventListener("loadeddata", event => {
+        console.log("Camera is ready");
+        resolve();
+      });
+    });
+  })
+  .then(_ => {
+
+    start(
+        markerUrls, 
+        video, 
+        video.videoWidth, 
+        video.videoHeight, 
+        function() { 
+            console.log('1') 
+        }, 
+        function() { 
+            console.log('2') 
+        });
+
+    });
+  })
+</script>
+
+</body>
+
+</html>
